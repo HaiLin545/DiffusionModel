@@ -1,0 +1,9 @@
+MODEL:
+    TIME_STEPS: 400
+
+TRAIN:
+    OUTPUT_DIR: "./output"
+    OUTPUT_FOLTER: "cifar10/"
+    CKPT_DIR: "ckpt"
+    SAVE_EVERY_ITER: 200
+    SAVE_EVERY_EPOCH: 2

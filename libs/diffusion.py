@@ -2,7 +2,6 @@ from libs.schedule import linear_beta_schedule
 import torch
 from torch import nn
 import torch.nn.functional as F
-from tqdm import tqdm
 from config.default import config
 from libs.unet import Unet
 
@@ -17,12 +16,12 @@ class DiffusionModel(nn.Module):
     def __init__(self, cfg) -> None:
         super().__init__()
 
-        self.timesteps = cfg.MODEL.TIME_STEPS
-        self.img_size = cfg.MODEL.IMAGE_SIZE
-        self.img_channels = cfg.MODEL.CHANNELS
+        self.timesteps = cfg.DM.TIME_STEPS
+        self.img_channels = cfg.DATASET.CHANNELS
+        self.img_size = cfg.DATASET.IMAGE_SIZE
 
         # define beta schedule
-        self.betas = linear_beta_schedule(timesteps=cfg.MODEL.TIME_STEPS)
+        self.betas = linear_beta_schedule(timesteps=cfg.DM.TIME_STEPS)
 
         # define alphas
         self.alphas = 1.0 - self.betas
@@ -119,11 +118,7 @@ class DiffusionModel(nn.Module):
         img = torch.randn(shape, device=device)
         imgs = []
 
-        for i in tqdm(
-            reversed(range(0, self.timesteps)),
-            desc="sampling loop time step",
-            total=self.timesteps,
-        ):
+        for i in reversed(range(0, self.timesteps)):
             img = self.p_sample(
                 img, torch.full((b,), i, device=device, dtype=torch.long), i
             )

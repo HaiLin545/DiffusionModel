@@ -1,0 +1,20 @@
+DM:
+    TIME_STEPS: 400
+
+DATASET:
+    IMAGE_SIZE : 28
+    CHANNELS : 1
+    BATCH_SIZE : 128
+
+TRAIN:
+    OUTPUT_DIR: "./output"
+    OUTPUT_FOLDER: "./FashionMNIST"
+    CKPT_DIR: "./ckpt"
+    SAVE_EVERY_ITER: 200
+    SAVE_EVERY_EPOCH: 2
+    EPOCH : 5
+    LR : 0.001
+    PRINT_CFG : False
+    SAVE_EVERY_ITER : 200
+    SAVE_EVERY_EPOCH : 2
+

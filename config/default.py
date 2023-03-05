@@ -2,6 +2,8 @@ import yaml
 from easydict import EasyDict
 
 config = EasyDict()
+config.DEVICE = "cuda:0"
+
 
 config.DATASET = EasyDict()
 config.DATASET.IMAGE_SIZE = 28
@@ -9,17 +11,17 @@ config.DATASET.CHANNELS = 1
 config.DATASET.BATCH_SIZE = 128
 
 config.TRAIN = EasyDict()
-config.TRAIN.CKPT_DIR = "./results/ckpt"
-config.TRAIN.OUTPUT_DIR = "./results"
+config.TRAIN.CKPT_DIR = "output/ckpt"
+config.TRAIN.OUTPUT_DIR = "output"
+config.TRAIN.OUTPUT_FOLDER = "output"
 config.TRAIN.EPOCH = 5
 config.TRAIN.LR = 1e-3
 config.TRAIN.PRINT_CFG = False
-config.TRAIN.SAVE_EVERY_ITER = 1000
-config.TRAIN.SAVE_EVERY_EPOCH = 1000
+config.TRAIN.SAVE_EVERY_ITER = 200
+config.TRAIN.SAVE_EVERY_EPOCH = 2
 
-
-config.MODEL = EasyDict()
-config.MODEL.TIME_STEPS = 400
+config.DM = EasyDict()
+config.DM.TIME_STEPS = 400
 
 config.TEST = EasyDict()
 
@@ -35,7 +37,7 @@ def _update_dict(k, v):
 def update_config(config_file):
     exp_config = None
     with open(config_file) as f:
-        exp_config = EasyDict(yaml.load(f))
+        exp_config = EasyDict(yaml.load(f, Loader=yaml.FullLoader))
         for k, v in exp_config.items():
             if k in config:
                 if isinstance(v, dict):
