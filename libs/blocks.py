@@ -6,7 +6,6 @@ from einops import rearrange
 
 
 class SinusoidalPositionEmbeddings(nn.Module):
-
     def __init__(self, dim):
         super().__init__()
         self.dim = dim
@@ -22,7 +21,6 @@ class SinusoidalPositionEmbeddings(nn.Module):
 
 
 class Block(nn.Module):
-
     def __init__(self, dim, dim_out, groups=8):
         super().__init__()
         self.proj = nn.Conv2d(dim, dim_out, 3, padding=1)
@@ -46,7 +44,11 @@ class ResnetBlock(nn.Module):
 
     def __init__(self, dim, dim_out, *, time_emb_dim=None, groups=8):
         super().__init__()
-        self.mlp = (nn.Sequential(nn.SiLU(), nn.Linear(time_emb_dim, dim_out)) if exists(time_emb_dim) else None)
+        self.mlp = (
+            nn.Sequential(nn.SiLU(), nn.Linear(time_emb_dim, dim_out))
+            if exists(time_emb_dim)
+            else None
+        )
 
         self.block1 = Block(dim, dim_out, groups=groups)
         self.block2 = Block(dim_out, dim_out, groups=groups)
@@ -68,7 +70,11 @@ class ConvNextBlock(nn.Module):
 
     def __init__(self, dim, dim_out, *, time_emb_dim=None, mult=2, norm=True):
         super().__init__()
-        self.mlp = (nn.Sequential(nn.GELU(), nn.Linear(time_emb_dim, dim)) if exists(time_emb_dim) else None)
+        self.mlp = (
+            nn.Sequential(nn.GELU(), nn.Linear(time_emb_dim, dim))
+            if exists(time_emb_dim)
+            else None
+        )
 
         self.ds_conv = nn.Conv2d(dim, dim, 7, padding=3, groups=dim)
 
@@ -94,7 +100,6 @@ class ConvNextBlock(nn.Module):
 
 
 class Attention(nn.Module):
-
     def __init__(self, dim, heads=4, dim_head=32):
         super().__init__()
         self.scale = dim_head**-0.5
@@ -106,7 +111,9 @@ class Attention(nn.Module):
     def forward(self, x):
         b, c, h, w = x.shape
         qkv = self.to_qkv(x).chunk(3, dim=1)
-        q, k, v = map(lambda t: rearrange(t, "b (h c) x y -> b h c (x y)", h=self.heads), qkv)
+        q, k, v = map(
+            lambda t: rearrange(t, "b (h c) x y -> b h c (x y)", h=self.heads), qkv
+        )
         q = q * self.scale
 
         sim = einsum("b h d i, b h d j -> b h i j", q, k)
@@ -119,7 +126,6 @@ class Attention(nn.Module):
 
 
 class LinearAttention(nn.Module):
-
     def __init__(self, dim, heads=4, dim_head=32):
         super().__init__()
         self.scale = dim_head**-0.5
@@ -132,7 +138,9 @@ class LinearAttention(nn.Module):
     def forward(self, x):
         b, c, h, w = x.shape
         qkv = self.to_qkv(x).chunk(3, dim=1)
-        q, k, v = map(lambda t: rearrange(t, "b (h c) x y -> b h c (x y)", h=self.heads), qkv)
+        q, k, v = map(
+            lambda t: rearrange(t, "b (h c) x y -> b h c (x y)", h=self.heads), qkv
+        )
 
         q = q.softmax(dim=-2)
         k = k.softmax(dim=-1)
@@ -146,7 +154,6 @@ class LinearAttention(nn.Module):
 
 
 class PreNorm(nn.Module):
-
     def __init__(self, dim, fn):
         super().__init__()
         self.fn = fn

@@ -1,0 +1,6 @@
+MODEL:
+    TIME_STEPS: 400
+
+TRAIN:
+    CKPT_DIR: "./results/ckpt"
+    OUTPUT_DIR: "./results"

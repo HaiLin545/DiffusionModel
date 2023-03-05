@@ -13,7 +13,6 @@ def default(val, d):
 
 
 class Residual(nn.Module):
-
     def __init__(self, fn):
         super().__init__()
         self.fn = fn

@@ -4,7 +4,6 @@ from functools import partial
 
 
 class Unet(nn.Module):
-
     def __init__(
         self,
         dim,
@@ -55,12 +54,15 @@ class Unet(nn.Module):
             is_last = ind >= (num_resolutions - 1)
 
             self.downs.append(
-                nn.ModuleList([
-                    block_klass(dim_in, dim_out, time_emb_dim=time_dim),
-                    block_klass(dim_out, dim_out, time_emb_dim=time_dim),
-                    Residual(PreNorm(dim_out, LinearAttention(dim_out))),
-                    Downsample(dim_out) if not is_last else nn.Identity(),
-                ]))
+                nn.ModuleList(
+                    [
+                        block_klass(dim_in, dim_out, time_emb_dim=time_dim),
+                        block_klass(dim_out, dim_out, time_emb_dim=time_dim),
+                        Residual(PreNorm(dim_out, LinearAttention(dim_out))),
+                        Downsample(dim_out) if not is_last else nn.Identity(),
+                    ]
+                )
+            )
 
         mid_dim = dims[-1]
         self.mid_block1 = block_klass(mid_dim, mid_dim, time_emb_dim=time_dim)
@@ -71,15 +73,20 @@ class Unet(nn.Module):
             is_last = ind >= (num_resolutions - 1)
 
             self.ups.append(
-                nn.ModuleList([
-                    block_klass(dim_out * 2, dim_in, time_emb_dim=time_dim),
-                    block_klass(dim_in, dim_in, time_emb_dim=time_dim),
-                    Residual(PreNorm(dim_in, LinearAttention(dim_in))),
-                    Upsample(dim_in) if not is_last else nn.Identity(),
-                ]))
+                nn.ModuleList(
+                    [
+                        block_klass(dim_out * 2, dim_in, time_emb_dim=time_dim),
+                        block_klass(dim_in, dim_in, time_emb_dim=time_dim),
+                        Residual(PreNorm(dim_in, LinearAttention(dim_in))),
+                        Upsample(dim_in) if not is_last else nn.Identity(),
+                    ]
+                )
+            )
 
         out_dim = default(out_dim, channels)
-        self.final_conv = nn.Sequential(block_klass(dim, dim), nn.Conv2d(dim, out_dim, 1))
+        self.final_conv = nn.Sequential(
+            block_klass(dim, dim), nn.Conv2d(dim, out_dim, 1)
+        )
 
     def forward(self, x, time):
         x = self.init_conv(x)
