@@ -1,9 +1,9 @@
-from libs.schedule import linear_beta_schedule
+from .schedule import linear_beta_schedule
 import torch
 from torch import nn
 import torch.nn.functional as F
-from config.default import config
-from libs.unet import Unet
+from config import cfg
+from libs.backbone.unet import Unet
 
 
 def extract(a, t, x_shape):

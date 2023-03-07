@@ -1,9 +1,25 @@
-MODEL:
-    TIME_STEPS: 400
+OUTPUT_DIR: "./output"
+OUTPUT_FOLDER: "./cifar10"
+CKPT_DIR: "./ckpt"
+DEBUG: False
+PRINT_CFG: True
+BACKUP_CODE: True
+
+DM:
+    TIME_STEPS: 1000
+
+DATASET:
+    NAME: "cifar10"
+    ROOT: "data/cifar10"
+    IMAGE_SIZE: 32
+    CHANNELS: 3
+    BATCH_SIZE: 128
 
 TRAIN:
-    OUTPUT_DIR: "./output"
-    OUTPUT_FOLTER: "cifar10/"
-    CKPT_DIR: "ckpt"
+    RESUME: "output/cifar10/ckpt/model_50.pth"
     SAVE_EVERY_ITER: 200
     SAVE_EVERY_EPOCH: 2
+    EPOCH: 100
+    LR: 0.001
+    LR_DECAY: 0.9
+    LR_DECAY_STEP: 4000
