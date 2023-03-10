@@ -1,12 +1,15 @@
 OUTPUT_DIR: "./output"
 OUTPUT_FOLDER: "./FashionMNIST"
-CKPT_DIR: "./ckpt"
+CKPT_FOLDER: "./ckpt"
 DEBUG: True
 PRINT_CFG: True
 BACKUP_CODE: True
 
 DM:
     TIME_STEPS: 400
+    USE_DDIM: True
+    DDIM_STEPS: 400
+    DDIM_VAR_RATIO: 1
 
 DATASET:
     NAME: "FashionMNIST"
@@ -16,7 +19,7 @@ DATASET:
     BATCH_SIZE: 128
 
 TRAIN:
-    RESUME: "output/FashionMNIST_debug/ckpt/model_2.pth"
+    # RESUME: "output/FashionMNIST_debug/ckpt/model_2.pth"
     SAVE_EVERY_ITER: 200
     SAVE_EVERY_EPOCH: 2
     EPOCH: 5

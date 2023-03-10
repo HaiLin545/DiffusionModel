@@ -2,7 +2,7 @@ import time
 
 
 class Logger:
-    def __init__(self, log_file="None"):
+    def __init__(self, log_file=None):
         self.log_file = log_file
         if log_file:
             with open(self.log_file, "w") as f:

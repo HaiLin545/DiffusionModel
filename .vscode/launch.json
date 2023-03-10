@@ -1,0 +1,47 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "infer cifar10",
+            "type": "python",
+            "request": "launch",
+            "program": "infer.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--cfg",
+                "config/cifar10.yaml",
+                "--ckpt",
+                "output/cifar10_e100_decay/ckpt/model_best.pth"
+            ]
+        },
+        {
+            "name": "infer fashionMNIST",
+            "type": "python",
+            "request": "launch",
+            "program": "infer.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--cfg",
+                "config/fashion_mnist.yaml",
+                "--ckpt",
+                "output/FashionMNIST/ckpt/model_5.pth"
+            ]
+        },
+        {
+            "name": "Debug Diffusion Model",
+            "type": "python",
+            "request": "launch",
+            "program": "train.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "--debug"
+            ]
+        }
+    ]
+}

@@ -1,13 +1,15 @@
 OUTPUT_DIR: "./output"
 OUTPUT_FOLDER: "./cifar10"
-CKPT_DIR: "./ckpt"
+CKPT_FOLDER: "./ckpt"
 DEBUG: False
 PRINT_CFG: True
-BACKUP_CODE: True
+BACKUP_CODE: False
 
 DM:
     TIME_STEPS: 1000
-
+    USE_DDIM: True
+    DDIM_STEPS: 100
+    DDIM_VAR_RATIO: 0.0
 DATASET:
     NAME: "cifar10"
     ROOT: "data/cifar10"
@@ -16,10 +18,10 @@ DATASET:
     BATCH_SIZE: 128
 
 TRAIN:
-    RESUME: "output/cifar10/ckpt/model_50.pth"
+    # RESUME: "output/cifar10/ckpt/model_50.pth"
     SAVE_EVERY_ITER: 200
-    SAVE_EVERY_EPOCH: 2
-    EPOCH: 100
+    SAVE_EVERY_EPOCH: 5
+    EPOCH: 50
     LR: 0.001
     LR_DECAY: 0.9
-    LR_DECAY_STEP: 4000
+    LR_DECAY_STEP: 5000

@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import argparse
 from libs.diffusion.diffusion import DiffusionModel
 from config import cfg, update_config
-from torchvision import transforms
 from pathlib import Path
 from torchvision.utils import save_image
 from libs.util.logger import Logger
+from libs.util.tools import fix_random_seed
 
 
 def parse_args():
@@ -16,7 +16,7 @@ def parse_args():
         "--cfg",
         type=str,
         help="experiment config file",
-        default="./config/fashion_mnist.yaml",
+        default="./config/cifar10.yaml",
     )
     parser.add_argument(
         "--ckpt",
@@ -51,34 +51,59 @@ def main():
     result_folder = output_folder / "result"
     result_folder.mkdir(exist_ok=True)
 
+    # fix_random_seed(cfg)
+    logger = Logger()
+
+    logger("Checkpoint loading...")
     ckpt = torch.load(ckpt_dir)
     if type(ckpt) == dict:
         ckpt = ckpt["state_dict"]
+    logger("Checkpoint loaded.")
 
     image_size = cfg.DATASET.IMAGE_SIZE
     channels = cfg.DATASET.CHANNELS
 
+    logger("Model initializing...")
     model = DiffusionModel(cfg)
     model.to(cfg.DEVICE)
-
     model.load_state_dict(ckpt)
     model.eval()
+    logger("Model initialized.")
 
-    logger = Logger()
+    nrow = 10
+    batch_size = 10
+
     logger("Sampling...")
-    samples = model.sample(image_size=image_size, batch_size=20, channels=channels)
+    interpolation = True
+    if interpolation:
+        samples = model.ddim_sample_loop_interpolation(
+            (batch_size, channels, image_size, image_size)
+        )
+        finsal_step_images = samples[-1]
+        save_image(
+            finsal_step_images,
+            str(result_folder / f"{os.path.basename(ckpt_dir)}_interpolation.png"),
+            nrow=nrow,
+        )
 
-    nrow = 20
-    step = cfg.DM.TIME_STEPS // nrow
-    all_images = torch.cat(samples[::step], dim=1).reshape(
-        -1, channels, image_size, image_size
-    )
+    else:
+        samples = model.sample(
+            image_size=image_size, batch_size=batch_size, channels=channels
+        )
+        if cfg.DM.USE_DDIM:
+            step = cfg.DM.DDIM_STEPS // nrow
+        else:
+            step = cfg.DM.TIME_STEPS // nrow
+        all_images = torch.cat(samples[::step], dim=1).reshape(
+            -1, channels, image_size, image_size
+        )
+        all_images = (all_images + 1) * 0.5
+        save_image(
+            all_images,
+            str(result_folder / f"{os.path.basename(ckpt_dir)}.png"),
+            nrow=nrow,
+        )
 
-    all_images = (all_images + 1) * 0.5
-
-    save_image(
-        all_images, str(result_folder / f"{os.path.basename(ckpt_dir)}.png"), nrow=nrow
-    )
     logger("Done!")
 
 

@@ -4,7 +4,7 @@ from easydict import EasyDict
 config = EasyDict()
 config.DEVICE = "cuda:0"
 config.DEBUG = False
-config.CKPT_DIR = "ckpt"
+config.CKPT_FOLDER = "ckpt"
 config.OUTPUT_DIR = "output"
 config.OUTPUT_FOLDER = "output"
 config.LOG_FILE = "result.log"
@@ -34,6 +34,9 @@ config.TRAIN.LR_DECAY_STEP = 1000
 
 config.DM = EasyDict()
 config.DM.TIME_STEPS = 400
+config.DM.USE_DDIM = False
+config.DM.DDIM_STEPS = 100
+config.DM.DDIM_VAR_RATIO = 0.0
 
 config.TEST = EasyDict()
 

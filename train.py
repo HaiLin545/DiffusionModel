@@ -20,7 +20,7 @@ def parse_args():
         "--cfg",
         type=str,
         help="experiment config file",
-        default="./config/fashion_mnist.yaml",
+        default="./config/cifar10.yaml",
     )
     parser.add_argument(
         "--output",
@@ -52,11 +52,9 @@ def main():
     begin_time = time.time()
 
     exist_ok = cfg.DEBUG or cfg.TRAIN.RESUME
-    output_dir = Path(cfg.OUTPUT_DIR)
-    output_dir.mkdir(exist_ok=exist_ok)
-    output_folder = output_dir / cfg.OUTPUT_FOLDER
+    output_folder = Path(cfg.OUTPUT_DIR) / cfg.OUTPUT_FOLDER
     output_folder.mkdir(exist_ok=exist_ok)
-    ckpt_folder = output_folder / Path(cfg.CKPT_DIR)
+    ckpt_folder = output_folder / Path(cfg.CKPT_FOLDER)
     ckpt_folder.mkdir(exist_ok=exist_ok)
 
     logger = Logger(output_folder / cfg.LOG_FILE)
@@ -85,6 +83,7 @@ def main():
     logger("Dataset loading...")
     fix_random_seed(cfg)
     start_time = time.time()
+
     dataset = make_dataset(cfg)
     dataloader = DataLoader(
         dataset,
@@ -93,6 +92,7 @@ def main():
         shuffle=True,
         drop_last=True,
     )
+
     logger(f"Dataset loaded. Time cost = {time_cost(start_time)}")
     start_time = time.time()
     logger("Model initializing...")
